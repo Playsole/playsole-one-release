@@ -24,6 +24,7 @@
     "health:check": "node --env-file=.env -r tsx/cjs scripts/health-check-cron.ts",
     "check:portability": "node -r tsx/cjs scripts/check-portability.ts",
     "test:load": "node -r tsx/cjs scripts/load-test.ts",
+    "sync:release": "node -r tsx/cjs scripts/sync-release.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "npm run lint --workspaces --if-present",
