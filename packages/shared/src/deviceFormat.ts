@@ -36,7 +36,7 @@ export function getClientIp(req: { headers: Record<string, any>; ip?: string }):
 
 /**
  * Format a raw User-Agent string into a clean, human-readable browser and operating system.
- * Example: "Firefox on Windows 10/11", "Chrome on Android", "Safari on macOS"
+ * Example: "Firefox on Windows", "Chrome on Android", "Safari on macOS"
  */
 export function formatUserAgent(ua?: string | null): string {
   if (!ua || typeof ua !== 'string') return 'Browser Session';
@@ -45,10 +45,7 @@ export function formatUserAgent(ua?: string | null): string {
 
   // OS detection
   let os = '';
-  if (/Windows NT 10\.0/i.test(raw)) os = 'Windows 10/11';
-  else if (/Windows NT 6\.3/i.test(raw)) os = 'Windows 8.1';
-  else if (/Windows NT 6\.1/i.test(raw)) os = 'Windows 7';
-  else if (/Windows NT/i.test(raw)) os = 'Windows';
+  if (/Windows/i.test(raw)) os = 'Windows';
   else if (/iPhone/i.test(raw)) os = 'iPhone';
   else if (/iPad/i.test(raw)) os = 'iPad';
   else if (/Macintosh|Mac OS X/i.test(raw)) os = 'macOS';
