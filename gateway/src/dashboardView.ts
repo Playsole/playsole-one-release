@@ -1,4 +1,5 @@
 import { cleanIp, formatUserAgent, formatDeviceLabel, COUNTRIES } from '@playsole-one/shared';
+import { injectTheme } from './theme';
 
 export interface DashboardProfile {
   displayName: string;
@@ -300,7 +301,7 @@ export function dashboardPage(data: DashboardData, opts: DashboardOptions = {}):
       </div>`;
   }).join('');
 
-  return `<!DOCTYPE html>
+  return injectTheme(`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -3195,5 +3196,5 @@ export function dashboardPage(data: DashboardData, opts: DashboardOptions = {}):
   });
 </script>
 </body>
-</html>`;
+</html>`);
 }

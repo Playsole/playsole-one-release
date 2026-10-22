@@ -11,9 +11,23 @@ import { adminApiRouter } from './routes/adminApi';
 import { ssoRouter } from './routes/sso';
 import { generateCsrfToken } from './middleware/csrf';
 
+import { injectTheme } from './theme';
+
 const logger = createLogger('gateway');
 
 const app = express();
+
+// Automatic dark mode and theme toggle injection for all HTML responses
+app.use((_req, res, next) => {
+  const originalSend = res.send;
+  res.send = function (body?: any) {
+    if (typeof body === 'string' && (body.includes('<!DOCTYPE html>') || body.includes('<html'))) {
+      body = injectTheme(body);
+    }
+    return originalSend.call(this, body);
+  };
+  next();
+});
 
 // Reflect the client IP behind Cloudflare proxies (rate limits, device
 // reporting, lockout). Dev defaults to off so req.ip is the direct peer.
