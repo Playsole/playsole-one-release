@@ -1,4 +1,4 @@
-import { cleanIp, formatUserAgent, formatDeviceLabel } from '@playsole-one/shared';
+import { cleanIp, formatUserAgent, formatDeviceLabel, COUNTRIES } from '@playsole-one/shared';
 
 export interface DashboardProfile {
   displayName: string;
@@ -83,6 +83,7 @@ export interface DashboardOptions {
   backupCodes?: string[];
   alerts?: Array<{ id: string; signals: string[]; deviceLabel: string; at: number; seen: boolean }>;
   developerSecretFlash?: { clientId: string; appName: string; secret: string };
+  detectedCountry?: string;
 }
 
 function escapeHtml(str: string): string {
@@ -149,6 +150,12 @@ export function dashboardPage(data: DashboardData, opts: DashboardOptions = {}):
   };
   const displayName = profile.displayName || data.displayName || 'User';
   const email = profile.email || '';
+  const userCountry = ((profile.locale && profile.locale.length === 2 && profile.locale !== 'en')
+    ? profile.locale
+    : (opts.detectedCountry || 'US')).toUpperCase();
+  const countryOptions = COUNTRIES.map((c) =>
+    `<option value="${c.code}" ${userCountry === c.code ? 'selected' : ''}>${escapeHtml(c.name)}</option>`
+  ).join('\n');
   const initialTab = opts.activeTab || 'overview';
   const tabLabelMap: Record<string, string> = {
     overview: 'Overview',
@@ -2165,12 +2172,9 @@ export function dashboardPage(data: DashboardData, opts: DashboardOptions = {}):
           </div>
 
           <div class="island-input-group">
-            <label for="locale">Language &amp; Region</label>
+            <label for="locale">Region</label>
             <select id="locale" name="locale">
-              <option value="en" ${profile.locale === 'en' ? 'selected' : ''}>English</option>
-              <option value="de" ${profile.locale === 'de' ? 'selected' : ''}>Deutsch</option>
-              <option value="fr" ${profile.locale === 'fr' ? 'selected' : ''}>Français</option>
-              <option value="es" ${profile.locale === 'es' ? 'selected' : ''}>Español</option>
+              ${countryOptions}
             </select>
           </div>
 

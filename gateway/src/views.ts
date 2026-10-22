@@ -1,5 +1,5 @@
 import { renderDevelopersView } from './developersView';
-import { cleanIp, formatUserAgent, formatDeviceLabel } from '@playsole-one/shared';
+import { cleanIp, formatUserAgent, formatDeviceLabel, COUNTRIES } from '@playsole-one/shared';
 import { renderSeoHead, landingSeo, privacySeo, termsSeo, SeoPageConfig } from './seo';
 
 function navAuthActions(userId?: string): string {
@@ -5030,7 +5030,17 @@ function scopeDescription(scope: string): string {
   return descriptions[scope] ?? `Access to "${scope}" data`;
 }
 
-export function profilePage(profile: { displayName: string; email: string; avatarUrl?: string; locale: string; emailVerified: boolean; createdAt: string; updatedAt: string }, error?: string): string {
+export function profilePage(
+  profile: { displayName: string; email: string; avatarUrl?: string; locale: string; emailVerified: boolean; createdAt: string; updatedAt: string },
+  error?: string,
+  detectedCountry?: string,
+): string {
+  const userCountry = ((profile.locale && profile.locale.length === 2 && profile.locale !== 'en')
+    ? profile.locale
+    : (detectedCountry || 'US')).toUpperCase();
+  const countryOptions = COUNTRIES.map((c) =>
+    `<option value="${c.code}" ${userCountry === c.code ? 'selected' : ''}>${c.name}</option>`
+  ).join('\n');
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5136,13 +5146,10 @@ export function profilePage(profile: { displayName: string; email: string; avata
     <input type="text" id="displayName" name="displayName" value="${profile.displayName}" required maxlength="128">
     <label for="email">Email</label>
     <input type="email" id="email" value="${profile.email}" disabled>
-    <label for="locale">Language</label>
+    <label for="locale">Region</label>
     <div class="select-wrap">
       <select id="locale" name="locale">
-        <option value="en" ${profile.locale === 'en' ? 'selected' : ''}>English</option>
-        <option value="de" ${profile.locale === 'de' ? 'selected' : ''}>Deutsch</option>
-        <option value="fr" ${profile.locale === 'fr' ? 'selected' : ''}>Français</option>
-        <option value="es" ${profile.locale === 'es' ? 'selected' : ''}>Español</option>
+        ${countryOptions}
       </select>
       <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>

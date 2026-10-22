@@ -93,11 +93,11 @@ export async function loginUser(email: string, password: string, meta?: { ipAddr
   };
 }
 
-export async function registerUser(name: string, email: string, password: string): Promise<{ userId: string; tenantId: string; email: string; displayName: string; emailVerified: boolean; supabaseAccessToken?: string; supabaseRefreshToken?: string } | { error: string; errorDescription: string }> {
+export async function registerUser(name: string, email: string, password: string, locale?: string): Promise<{ userId: string; tenantId: string; email: string; displayName: string; emailVerified: boolean; supabaseAccessToken?: string; supabaseRefreshToken?: string } | { error: string; errorDescription: string }> {
   const res = await fetchWithTimeout(`${AUTH_URL}/api/register`, {
     method: 'POST',
     headers: withSecret({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ name, email, password }),
+    body: JSON.stringify({ name, email, password, locale }),
   });
   const body = await res.json() as Record<string, any>;
   if (!res.ok) return { error: body.error ?? 'unknown', errorDescription: body.error_description ?? 'Registration failed.' };
@@ -513,7 +513,7 @@ export async function getDevices(userId: string, tenantId?: string, supabaseAcce
   return Array.isArray(body) ? body : (body.devices ?? []);
 }
 
-export async function reportDevice(userId: string, tenantId: string, info: { fingerprint: string; label: string; userAgent?: string; ipAddress?: string }, supabaseAccessToken?: string): Promise<{ device: any; riskSignals: string[] }> {
+export async function reportDevice(userId: string, tenantId: string, info: { fingerprint: string; label: string; userAgent?: string; ipAddress?: string; country?: string; city?: string }, supabaseAccessToken?: string): Promise<{ device: any; riskSignals: string[] }> {
   const res = await fetchWithTimeout(`${SECURITY_URL}/devices`, {
     method: 'POST',
     headers: withSecret({ 'Content-Type': 'application/json', 'x-authenticated-user-id': userId, 'x-tenant-id': tenantId, ...(supabaseAccessToken ? { 'x-supabase-access-token': supabaseAccessToken } : {}) }),

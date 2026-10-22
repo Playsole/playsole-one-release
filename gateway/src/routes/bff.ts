@@ -16,7 +16,7 @@ import {
   getSessions, revokeSession,
   requestEmailRecovery, consumeRecoveryToken, resetMfaForRecovery,
 } from '../bffClient';
-import { internalSecretHeaders, getSupabase, getStateStore, createLogger, audit, dispatchToExpress, getInternalService, cleanIp, formatUserAgent, formatDeviceLabel, getClientIp } from '@playsole-one/shared';
+import { internalSecretHeaders, getSupabase, getStateStore, createLogger, audit, dispatchToExpress, getInternalService, cleanIp, formatUserAgent, formatDeviceLabel, getClientIp, detectCountry, detectCountrySync } from '@playsole-one/shared';
 import { config } from '../config';
 import { sessionCookieName, sessionCookieOptions, deviceCookieName, ssoCookieDomain } from '../cookies';
 import { authRateLimit, apiRateLimit } from '../middleware/rateLimit';
@@ -193,11 +193,13 @@ async function trackUserDevice(
   }
   try {
     const label = formatDeviceLabel(userAgent);
+    const country = detectCountrySync(req);
     const reported = await reportDevice(userId, tenantId, {
       fingerprint,
       label,
       userAgent,
       ipAddress,
+      country,
     }, supabaseAccessToken);
     if (reported.riskSignals.length > 0) {
       await createRiskAlert(userId, tenantId, {
@@ -428,7 +430,8 @@ router.post('/register', authRateLimit, async (req, res) => {
   }
 
   try {
-    const result = await registerUser(name, email, password);
+    const userCountry = await detectCountry(req);
+    const result = await registerUser(name, email, password, userCountry);
     if ('error' in result) {
       res.status(409).send(registerPage(returnTo, pending_auth, result.errorDescription));
       return;
@@ -1045,6 +1048,7 @@ router.get('/profile', async (req, res) => {
       activeTab: 'profile',
       message: req.query.message as string,
       error: req.query.error as string,
+      detectedCountry: detectCountrySync(req),
     }));
   } catch (err: any) {
     logger.error({ err }, 'GET /profile failed');
@@ -1596,6 +1600,7 @@ router.get('/dashboard', async (req, res) => {
       error,
       alerts,
       developerSecretFlash: devFlash,
+      detectedCountry: detectCountrySync(req),
     }));
   } catch (err: any) {
     logger.error({ err }, 'GET /dashboard failed');

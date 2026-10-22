@@ -68,7 +68,7 @@ export async function getUserById(id: string): Promise<User | undefined> {
   return data ? toUser(data) : undefined;
 }
 
-export async function createUser(email: string, displayName: string, password: string): Promise<User> {
+export async function createUser(email: string, displayName: string, password: string, locale?: string): Promise<User> {
   const id = randomUUID();
   const passwordHash = hashPassword(password);
   const supabase = getSupabase();
@@ -80,7 +80,7 @@ export async function createUser(email: string, displayName: string, password: s
 
   const { error: profileError } = await supabase.from('profiles').insert({
     user_id: id, tenant_id: DEFAULT_TENANT_ID, email,
-    display_name: displayName, locale: 'en',
+    display_name: displayName, locale: locale || 'US',
   });
   if (profileError) throw new Error(`Failed to create profile: ${profileError.message}`);
 
@@ -93,7 +93,7 @@ export async function createUser(email: string, displayName: string, password: s
  * so RLS can enforce tenant isolation via JWT claims.
  */
 export async function registerWithSupabaseAuth(
-  email: string, password: string, displayName: string, tenantId: string,
+  email: string, password: string, displayName: string, tenantId: string, locale?: string,
 ): Promise<{ user: User; accessToken?: string; refreshToken?: string }> {
   const start = Date.now();
   const step = (label: string) => logger.debug({ ms: Date.now() - start }, `register ${label}`);
@@ -136,7 +136,7 @@ export async function registerWithSupabaseAuth(
 
   const { error: profileError } = await admin.from('profiles').insert({
     user_id: id, tenant_id: tenantId, email,
-    display_name: displayName, locale: 'en',
+    display_name: displayName, locale: locale || 'US',
   });
   if (profileError) throw new Error(`Failed to create profile: ${profileError.message}`);
 

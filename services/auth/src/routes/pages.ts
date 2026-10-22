@@ -69,7 +69,7 @@ router.post('/api/login', requireInternalSecret, async (req, res) => {
 });
 
 router.post('/api/register', requireInternalSecret, async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, locale } = req.body;
 
   if (!name || !email || !password) {
     res.status(400).json({ error: 'invalid_request', error_description: 'All fields are required.' });
@@ -93,7 +93,7 @@ router.post('/api/register', requireInternalSecret, async (req, res) => {
   }
 
   try {
-    const result = await registerWithSupabaseAuth(email, password, name, DEFAULT_TENANT_ID);
+    const result = await registerWithSupabaseAuth(email, password, name, DEFAULT_TENANT_ID, locale);
 
     // Email confirmation is handled by Supabase Auth (6-digit OTP sent on
     // signUp). Do NOT send a second Playsole verification email here — it

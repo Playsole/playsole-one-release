@@ -154,5 +154,27 @@ describe('dashboardPage rendering', () => {
     expect(html).toContain('onclick="mobileSwitchTab(\'security\')"');
     expect(html).toContain('onclick="toggleUserMobileDrawer()"');
   });
+
+  it('renders Region dropdown labeled "Region" with world countries defaulting to detected country', () => {
+    const html = dashboardPage(mockData, { activeTab: 'profile', detectedCountry: 'NG' });
+
+    expect(html).toContain('<label for="locale">Region</label>');
+    expect(html).not.toContain('Language &amp; Region');
+    expect(html).toContain('<option value="NG" selected>Nigeria</option>');
+    expect(html).toContain('<option value="US" >United States</option>');
+    expect(html).toContain('<option value="GB" >United Kingdom</option>');
+    expect(html).toContain('<option value="CA" >Canada</option>');
+  });
+
+  it('renders user country selected when profile has explicit country code', () => {
+    const customData = {
+      ...mockData,
+      profile: { ...mockData.profile, locale: 'GB' },
+    };
+    const html = dashboardPage(customData, { activeTab: 'profile', detectedCountry: 'US' });
+
+    expect(html).toContain('<option value="GB" selected>United Kingdom</option>');
+    expect(html).toContain('<option value="US" >United States</option>');
+  });
 });
 
