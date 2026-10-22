@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://one.playsole.xyz/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://one.playsole.xyz/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://one.playsole.xyz/"/>
+    <image:image>
+      <image:loc>https://one.playsole.xyz/logo.png</image:loc>
+      <image:title>Playsole One Unified Identity &amp; Auth Platform</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://one.playsole.xyz/developers</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://one.playsole.xyz/developers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://one.playsole.xyz/developers"/>
+  </url>
+  <url>
+    <loc>https://one.playsole.xyz/status</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://one.playsole.xyz/status"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://one.playsole.xyz/status"/>
+  </url>
+  <url>
+    <loc>https://one.playsole.xyz/privacy</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://one.playsole.xyz/privacy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://one.playsole.xyz/privacy"/>
+  </url>
+  <url>
+    <loc>https://one.playsole.xyz/terms</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://one.playsole.xyz/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://one.playsole.xyz/terms"/>
+  </url>
+  <url>
+    <loc>https://one.playsole.xyz/.well-known/openid-configuration</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://one.playsole.xyz/.well-known/jwks.json</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

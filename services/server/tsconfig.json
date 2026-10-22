@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../../packages/shared" },
+    { "path": "../../gateway" },
+    { "path": "../../services/auth" },
+    { "path": "../../services/session" },
+    { "path": "../../services/profile" },
+    { "path": "../../services/consent" },
+    { "path": "../../services/security" }
+  ]
+}

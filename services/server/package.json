@@ -1,0 +1,29 @@
+{
+  "name": "@playsole-one/server",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@playsole-one/shared": "*",
+    "@playsole-one/gateway": "*",
+    "@playsole-one/auth": "*",
+    "@playsole-one/session": "*",
+    "@playsole-one/profile": "*",
+    "@playsole-one/consent": "*",
+    "@playsole-one/security": "*",
+    "express": "^4.19.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.0"
+  }
+}

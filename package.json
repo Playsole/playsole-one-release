@@ -1,0 +1,64 @@
+{
+  "name": "playsole-one",
+  "description": "Unified identity and account platform (OAuth 2.0 / OpenID Connect) for the Playsole ecosystem",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Playsole/playsole_one.git"
+  },
+  "private": true,
+  "workspaces": [
+    "gateway",
+    "services/*",
+    "packages/*",
+    "worker"
+  ],
+  "scripts": {
+    "start": "npm run build && node services/server/dist/index.js",
+    "build": "npm run build --workspace=@playsole-one/shared && npm run build --workspace=@playsole-one/auth && npm run build --workspace=@playsole-one/session && npm run build --workspace=@playsole-one/profile && npm run build --workspace=@playsole-one/consent && npm run build --workspace=@playsole-one/security && npm run build --workspace=@playsole-one/gateway && npm run build --workspace=@playsole-one/server && npm run build --workspace=@playsole-one/worker",
+    "dev": "node --watch --watch-preserve-output --watch-path=gateway/src --watch-path=services --watch-path=packages/shared/src --env-file=.env -r tsx/cjs services/server/src/index.ts",
+    "dev:multi": "concurrently -n session,auth,profile,consent,security,gateway -c cyan,magenta,green,blue,yellow,red \"node --watch --watch-preserve-output --watch-path=services/session/src --watch-path=packages/shared/src --env-file=.env -r tsx/cjs services/session/src/index.ts\" \"node --watch --watch-preserve-output --watch-path=services/auth/src --watch-path=packages/shared/src --env-file=.env -r tsx/cjs services/auth/src/index.ts\" \"node --watch --watch-preserve-output --watch-path=services/profile/src --watch-path=packages/shared/src --env-file=.env -r tsx/cjs services/profile/src/index.ts\" \"node --watch --watch-preserve-output --watch-path=services/consent/src --watch-path=packages/shared/src --env-file=.env -r tsx/cjs services/consent/src/index.ts\" \"node --watch --watch-preserve-output --watch-path=services/security/src --watch-path=packages/shared/src --env-file=.env -r tsx/cjs services/security/src/index.ts\" \"node --watch --watch-preserve-output --watch-path=gateway/src --watch-path=packages/shared/src --env-file=.env -r tsx/cjs gateway/src/index.ts\"",
+    "dev:server": "node --env-file=.env -r tsx/cjs services/server/src/index.ts",
+    "dev:worker": "npm run dev --workspace=@playsole-one/worker",
+    "migrate": "node --env-file=.env -r tsx/cjs scripts/run-migrations.ts",
+    "health:check": "node --env-file=.env -r tsx/cjs scripts/health-check-cron.ts",
+    "check:portability": "node -r tsx/cjs scripts/check-portability.ts",
+    "test:load": "node -r tsx/cjs scripts/load-test.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "npm run lint --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present",
+    "test:first-party": "node test-apps/first-party-app/server.js",
+    "test:third-party": "node test-apps/third-party-app/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/supertest": "^7.2.0",
+    "concurrently": "^10.0.3",
+    "esbuild": "^0.28.2",
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.0"
+  },
+  "overrides": {
+    "proxy-addr": "^2.0.8",
+    "shell-quote": "^1.12.0",
+    "braces": "^3.0.3",
+    "source-map-js": "^1.2.2",
+    "follow-redirects": "^1.16.1",
+    "multer": "^2.4.0",
+    "qs": "^6.16.1",
+    "fast-copy": "^4.2.0",
+    "sharp": "^0.35.5",
+    "@fastify/busboy": "^3.2.4",
+    "ws": "^8.22.0",
+    "undici": "^6.28.2",
+    "vite": "^6.2.0",
+    "uuid": "^11.1.1",
+    "esbuild": "^0.28.2"
+  }
+}

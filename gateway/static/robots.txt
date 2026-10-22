@@ -1,0 +1,34 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /developers
+Allow: /status
+Allow: /privacy
+Allow: /terms
+Allow: /.well-known/
+Allow: /logo.png
+Allow: /logo.svg
+Allow: /brand/
+Allow: /site.webmanifest
+Allow: /manifest.json
+Allow: /sitemap.xml
+
+# Protect authenticated user state, MFA challenges, and backend endpoints
+Disallow: /api/
+Disallow: /mfa/
+Disallow: /verify-
+Disallow: /profile
+Disallow: /profile/
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /admin
+Disallow: /admin/
+Disallow: /recovery
+Disallow: /recovery/
+Disallow: /security
+Disallow: /security/
+Disallow: /grants
+Disallow: /grants/
+Disallow: /consent
+
+Sitemap: https://one.playsole.xyz/sitemap.xml

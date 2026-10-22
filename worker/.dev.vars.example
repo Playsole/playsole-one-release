@@ -1,0 +1,16 @@
+# Local development secrets for `wrangler dev` in the worker/ directory.
+# Copy to .dev.vars (gitignored) and fill in real values.
+# For production, set these with `wrangler secret put <NAME>`.
+
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+JWT_PRIVATE_KEY=
+JWT_PUBLIC_KEY=
+RESEND_API_KEY=
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_FROM_NUMBER=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=

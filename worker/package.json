@@ -1,0 +1,29 @@
+{
+  "name": "@playsole-one/worker",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --config ../wrangler.toml",
+    "deploy": "wrangler deploy --config ../wrangler.toml",
+    "build": "tsc --noEmit",
+    "clean": "rm -rf .wrangler dist"
+  },
+  "dependencies": {
+    "@playsole-one/gateway": "*",
+    "@playsole-one/shared": "*",
+    "@playsole-one/auth": "*",
+    "@playsole-one/session": "*",
+    "@playsole-one/profile": "*",
+    "@playsole-one/consent": "*",
+    "@playsole-one/security": "*",
+    "@supabase/supabase-js": "^2.45.0",
+    "jose": "^5.6.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241205.0",
+    "typescript": "^5.5.0",
+    "wrangler": "^4.151.3"
+  }
+}

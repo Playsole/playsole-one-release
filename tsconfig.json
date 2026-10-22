@@ -1,0 +1,34 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@playsole-one/shared": ["packages/shared/src/index.ts"],
+      "@playsole-one/gateway": ["gateway/src/index.ts"],
+      "@playsole-one/auth": ["services/auth/src/index.ts"],
+      "@playsole-one/session": ["services/session/src/index.ts"],
+      "@playsole-one/profile": ["services/profile/src/index.ts"],
+      "@playsole-one/consent": ["services/consent/src/index.ts"],
+      "@playsole-one/security": ["services/security/src/index.ts"],
+      "@playsole-one/worker": ["worker/src/index.ts"]
+    }
+  },
+  "include": [
+    "gateway/src/**/*",
+    "packages/*/src/**/*",
+    "services/*/src/**/*",
+    "worker/src/**/*",
+    "scripts/**/*",
+    "tests/**/*",
+    "vitest.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "**/dist",
+    "test-apps"
+  ]
+}

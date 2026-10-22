@@ -1,0 +1,19 @@
+name = "playsole-one"
+main = "worker/src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[alias]
+"iconv-lite" = "./worker/src/iconv-lite-stub.js"
+
+[assets]
+directory = "./gateway/static"
+binding = "ASSETS"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[vars]
+BASE_URL = "https://one.playsole.xyz"
+PUBLIC_ORIGIN = "https://one.playsole.xyz"
+OIDC_ISSUER = "https://one.playsole.xyz"

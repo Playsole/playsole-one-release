@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playsole Arena — First-Party Test App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(56, 189, 248, 0.2);
+      --card-border-hover: rgba(56, 189, 248, 0.4);
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.35);
+      --accent: #6366f1;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --font-main: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at top center, #0f172a 0%, #07090e 100%);
+      color: var(--text);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    /* Ambient background lights */
+    .glow-sphere {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 10;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      background: rgba(7, 9, 14, 0.6);
+      padding: 1rem 2rem;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    .logo-icon svg {
+      width: 22px;
+      height: 22px;
+      color: white;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none;
+      border: none;
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      color: white;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Hero / Status Banner */
+    .hero-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 2.25rem;
+      backdrop-filter: blur(16px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-info h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #fff 40%, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-info p {
+      color: var(--text-muted);
+      max-width: 650px;
+      font-size: 0.95rem;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .meta-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      color: #cbd5e1;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .dot-green { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .dot-blue { background: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
+
+    /* Bento Grid */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+    }
+
+    .col-7 { grid-column: span 7; }
+    .col-5 { grid-column: span 5; }
+    .col-6 { grid-column: span 6; }
+    .col-12 { grid-column: span 12; }
+
+    @media (max-width: 900px) {
+      .col-7, .col-5, .col-6 { grid-column: span 12; }
+      .hero-card { flex-direction: column; align-items: flex-start; }
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Auth state cards */
+    .auth-state-box {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: white;
+      border: 2px solid rgba(56, 189, 248, 0.5);
+    }
+
+    .profile-info h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .profile-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Code & JSON Display */
+    pre {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #93c5fd;
+      overflow-x: auto;
+      max-height: 250px;
+    }
+
+    /* Event Logs */
+    .log-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .log-item {
+      background: rgba(0, 0, 0, 0.35);
+      border-left: 3px solid #38bdf8;
+      border-radius: 0 8px 8px 0;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .log-item.success { border-left-color: var(--success); }
+    .log-item.error { border-left-color: var(--danger); }
+    .log-item.warning { border-left-color: var(--warning); }
+
+    .log-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    .log-action {
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .log-detail {
+      font-family: var(--font-mono);
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Modal / Drawer */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 2rem;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-input {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.65rem 0.9rem;
+      color: white;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    .alert {
+      padding: 0.9rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #86efac;
+    }
+
+    /* Profile Circle Avatar System */
+    .avatar-circle-wrap {
+      position: relative;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #0076FE;
+      box-shadow: 0 0 14px rgba(0, 118, 254, 0.35);
+      border: 2px solid rgba(0, 118, 254, 0.5);
+      transition: all 0.2s ease;
+    }
+
+    .avatar-circle-wrap:hover {
+      box-shadow: 0 0 20px rgba(0, 118, 254, 0.6);
+      border-color: #0076FE;
+      transform: scale(1.03);
+    }
+
+    .avatar-circle-sm {
+      width: 36px;
+      height: 36px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .avatar-circle-lg {
+      width: 68px;
+      height: 68px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      border-width: 3px;
+    }
+
+    .avatar-circle-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 50%;
+    }
+
+    .avatar-circle-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-family: var(--font-sans);
+      user-select: none;
+    }
+
+    .header-user-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.35rem 0.75rem 0.35rem 0.4rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+    }
+
+    .header-user-meta {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .header-user-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .header-user-status {
+      font-size: 0.68rem;
+      color: #86efac;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      margin-bottom: 1.25rem;
+    }
+
+    .profile-info h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .profile-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .profile-info .profile-uid {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: rgba(255, 255, 255, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-sphere"></div>
+
+  <header>
+    <div class="header-content">
+      <div class="brand-wrap">
+        <div class="logo-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <span class="brand-title">Playsole Arena</span>
+            <span class="brand-badge">⚡ First-Party Ecosystem Client</span>
+          </div>
+          <span style="font-size:0.75rem;color:var(--text-muted)">Official Ecosystem App • Direct Zero-Consent SSO</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <!-- Profile Circle in Header (Shown when Authenticated) -->
+        <div id="headerProfileBadge" class="header-user-badge" style="display:none">
+          <div class="avatar-circle-wrap avatar-circle-sm" id="headerAvatarWrap">
+            <img id="headerAvatarImg" src="" alt="User Avatar" class="avatar-circle-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <span id="headerAvatarFallback" class="avatar-circle-fallback">U</span>
+          </div>
+          <div class="header-user-meta">
+            <span id="headerUserName" class="header-user-name"></span>
+            <span class="header-user-status"><span class="dot dot-green"></span> Connected</span>
+          </div>
+        </div>
+
+        <button class="btn btn-outline" onclick="openSettingsModal()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          Config
+        </button>
+        <a id="btnAuthAction" href="/login" class="btn btn-primary" style="display:none">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+          Sign In
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- URL Alert Banner if error/success -->
+    <div id="urlAlert"></div>
+
+    <!-- Hero Card -->
+    <div class="hero-card">
+      <div class="hero-info">
+        <h1>First-Party SSO Test Suite</h1>
+        <p>This web application represents an official Playsole First-Party client (Playsole Arena). As a first-party application, it provides seamless zero-consent single sign-on when already signed into Playsole One, using a simple native "Sign In" action.</p>
+        <div class="hero-meta">
+          <div class="meta-pill"><span class="dot dot-green"></span> Issuer: <span id="metaIssuer">https://one.playsole.xyz</span></div>
+          <div class="meta-pill"><span class="dot dot-blue"></span> Client ID: <span id="metaClientId">first-party-test</span></div>
+          <div class="meta-pill">SSO Consent: <span style="color:#10b981;font-weight:700">BYPASSED (Direct SSO)</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;min-width:210px">
+        <a id="heroSignInBtn" href="/login" class="btn btn-primary" style="justify-content:center;display:none">
+          Sign In
+        </a>
+        <a href="/login?prompt=select_account" class="btn btn-outline" style="justify-content:center">
+          👥 Switch / Choose Account
+        </a>
+        <a id="linkManageGrants" href="https://one.playsole.xyz/dashboard?tab=security" target="_blank" class="btn btn-outline" style="justify-content:center">
+          📋 Account Security &amp; Sessions
+        </a>
+      </div>
+    </div>
+
+    <!-- Bento Grid -->
+    <div class="bento-grid">
+      <!-- Session Card -->
+      <div class="panel col-7">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              User Session & Tokens
+            </div>
+            <div class="panel-subtitle">Authenticated session state held by this relying party</div>
+          </div>
+          <div id="sessionBadge">
+            <span style="font-size:0.75rem;padding:0.25rem 0.6rem;background:rgba(239,68,68,0.15);color:#fca5a5;border-radius:9999px;font-weight:600">UNAUTHENTICATED</span>
+          </div>
+        </div>
+
+        <div id="sessionContent">
+          <div style="text-align:center;padding:2.5rem 1rem;color:var(--text-muted)">
+            <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:0.75rem;opacity:0.4"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <p>No active user session. Click <strong>"Sign In with Playsole One"</strong> above to test seamless authentication.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Protocol Stream -->
+      <div class="panel col-5">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              OAuth Protocol Stream
+            </div>
+            <div class="panel-subtitle">Real-time log of PKCE, tokens, and redirects</div>
+          </div>
+          <button class="btn btn-outline" style="padding:0.3rem 0.6rem;font-size:0.75rem" onclick="fetchStatus()">Refresh</button>
+        </div>
+        <div class="log-stream" id="logStream">
+          <div style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:1rem">Waiting for events...</div>
+        </div>
+      </div>
+
+      <!-- ID Token Decoded Claims -->
+      <div class="panel col-6" id="idTokenPanel" style="display:none">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            Decoded ID Token (RS256 JWT)
+          </div>
+        </div>
+        <pre><code id="idTokenCode">// Claims will appear here</code></pre>
+      </div>
+
+      <!-- UserInfo Endpoint Response -->
+      <div class="panel col-6" id="userInfoPanel" style="display:none">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            /userinfo Payload
+          </div>
+        </div>
+        <pre><code id="userInfoCode">// UserInfo will appear here</code></pre>
+      </div>
+    </div>
+  </main>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <h2 style="font-size:1.25rem;font-weight:700">Relying Party Configuration</h2>
+        <button onclick="closeSettingsModal()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:1.2rem">&times;</button>
+      </div>
+      <form id="configForm" onsubmit="saveConfig(event)">
+        <div class="form-group">
+          <label>Playsole One Issuer URL</label>
+          <input type="text" id="cfgIssuer" class="form-input" required>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.3rem">
+            Deployed: <code>https://one.playsole.xyz</code> | Local: <code>http://localhost:8080</code>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Client ID</label>
+          <input type="text" id="cfgClientId" class="form-input" required>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.3rem">
+            Configured client ID (default: <code>first-party-test</code>)
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Redirect URI</label>
+          <input type="text" id="cfgRedirectUri" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label>Requested Scopes</label>
+          <input type="text" id="cfgScopes" class="form-input" required>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:0.75rem;margin-top:1.5rem">
+          <button type="button" class="btn btn-outline" onclick="closeSettingsModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        render(data);
+      } catch (err) {
+        console.error('Failed to load status:', err);
+      }
+    }
+
+    // Generate consistent avatar color matching Playsole One's brand algorithm
+    function getAvatarColor(name) {
+      const colors = [
+        '#2563eb', '#4f46e5', '#7c3aed', '#9333ea',
+        '#0284c7', '#0891b2', '#0d9488', '#16a34a',
+        '#d97706', '#ea580c', '#e11d48', '#475569'
+      ];
+      let hash = 0;
+      const str = String(name || 'User');
+      for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      return colors[Math.abs(hash) % colors.length];
+    }
+
+    function getInitial(name) {
+      const trimmed = String(name || '').trim();
+      return (trimmed ? trimmed.charAt(0) : 'U').toUpperCase();
+    }
+
+    function render(data) {
+      // Config labels
+      document.getElementById('metaIssuer').innerText = data.config.issuer;
+      document.getElementById('metaClientId').innerText = data.config.clientId;
+      document.getElementById('cfgIssuer').value = data.config.issuer;
+      document.getElementById('cfgClientId').value = data.config.clientId;
+      document.getElementById('cfgRedirectUri').value = data.config.redirectUri;
+      document.getElementById('cfgScopes').value = data.config.scopes;
+
+      const session = data.session;
+      const sessionContent = document.getElementById('sessionContent');
+      const sessionBadge = document.getElementById('sessionBadge');
+      const btnAuthAction = document.getElementById('btnAuthAction');
+      const idTokenPanel = document.getElementById('idTokenPanel');
+      const userInfoPanel = document.getElementById('userInfoPanel');
+
+      const heroSignInBtn = document.getElementById('heroSignInBtn');
+
+      if (session) {
+        if (heroSignInBtn) heroSignInBtn.style.display = 'none';
+        btnAuthAction.style.display = 'inline-flex';
+        sessionBadge.innerHTML = `<span style="font-size:0.75rem;padding:0.25rem 0.6rem;background:rgba(16,185,129,0.15);color:#86efac;border-radius:9999px;font-weight:600">SSO AUTHENTICATED</span>`;
+        btnAuthAction.innerText = 'Log Out';
+        btnAuthAction.href = '/logout';
+        btnAuthAction.className = 'btn btn-outline';
+
+        const sub = session.userInfo?.sub || session.idTokenClaims?.sub || 'Playsole User';
+        const name = (session.userInfo?.name || session.idTokenClaims?.name || session.userInfo?.display_name || '').trim();
+        const email = session.userInfo?.email || session.idTokenClaims?.email || '';
+        const displayName = name || (email.includes('@') ? email.split('@')[0] : 'Playsole User');
+        const avatarUrl = session.userInfo?.picture || session.idTokenClaims?.picture || `${data.config.issuer}/avatar/${encodeURIComponent(sub)}`;
+        const avatarColor = getAvatarColor(displayName || sub);
+        const initial = getInitial(displayName || sub);
+
+        // Update header profile badge with the profile circle
+        const headerProfileBadge = document.getElementById('headerProfileBadge');
+        if (headerProfileBadge) {
+          headerProfileBadge.style.display = 'flex';
+          const headerAvatarWrap = document.getElementById('headerAvatarWrap');
+          if (headerAvatarWrap) headerAvatarWrap.style.backgroundColor = avatarColor;
+          const headerAvatarFallback = document.getElementById('headerAvatarFallback');
+          if (headerAvatarFallback) {
+            headerAvatarFallback.innerText = initial;
+            headerAvatarFallback.style.display = 'none';
+          }
+          const headerAvatarImg = document.getElementById('headerAvatarImg');
+          if (headerAvatarImg) {
+            headerAvatarImg.src = avatarUrl;
+            headerAvatarImg.style.display = 'block';
+          }
+          const headerUserName = document.getElementById('headerUserName');
+          if (headerUserName) headerUserName.innerText = displayName;
+        }
+
+        sessionContent.innerHTML = `
+          <div class="auth-state-box">
+            <div class="profile-card">
+              <div class="avatar-circle-wrap avatar-circle-lg" style="background-color: ${avatarColor};">
+                <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)}" class="avatar-circle-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <span class="avatar-circle-fallback" style="display:none;">${initial}</span>
+              </div>
+              <div class="profile-info">
+                <h3>
+                  <span>${escapeHtml(displayName)}</span>
+                  <span style="font-size:0.7rem;padding:0.18rem 0.55rem;background:rgba(0,118,254,0.15);color:#60a5fa;border-radius:9999px;font-weight:600">VERIFIED ID</span>
+                </h3>
+                <p>📧 ${escapeHtml(email)}</p>
+                <div class="profile-uid">User ID: ${escapeHtml(sub)}</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:1rem">
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.3rem">Access Token (Bearer):</div>
+            <pre style="max-height:80px"><code>${session.tokens.access_token || 'N/A'}</code></pre>
+          </div>
+
+          <div style="margin-bottom:1.25rem">
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.3rem">Refresh Token:</div>
+            <pre style="max-height:60px"><code>${session.tokens.refresh_token || 'N/A'}</code></pre>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:1rem">
+            <button class="btn btn-primary" onclick="rotateToken()">🔄 Rotate Refresh Token</button>
+            <a href="/login?prompt=select_account" class="btn btn-outline">👥 Switch Account</a>
+            <a href="/logout" class="btn btn-danger">Sign Out (App Only)</a>
+            <a href="/logout?global=true" class="btn btn-danger">Global SSO Sign Out</a>
+          </div>
+        `;
+
+        if (session.idTokenClaims) {
+          idTokenPanel.style.display = 'flex';
+          document.getElementById('idTokenCode').innerText = JSON.stringify(session.idTokenClaims, null, 2);
+        }
+        if (session.userInfo) {
+          userInfoPanel.style.display = 'flex';
+          document.getElementById('userInfoCode').innerText = JSON.stringify(session.userInfo, null, 2);
+        }
+      } else {
+        const headerProfileBadge = document.getElementById('headerProfileBadge');
+        if (headerProfileBadge) headerProfileBadge.style.display = 'none';
+
+        if (heroSignInBtn) heroSignInBtn.style.display = 'inline-flex';
+        btnAuthAction.style.display = 'inline-flex';
+        sessionBadge.innerHTML = `<span style="font-size:0.75rem;padding:0.25rem 0.6rem;background:rgba(239,68,68,0.15);color:#fca5a5;border-radius:9999px;font-weight:600">UNAUTHENTICATED</span>`;
+        btnAuthAction.innerText = 'Sign In';
+        btnAuthAction.href = '/login';
+        btnAuthAction.className = 'btn btn-primary';
+        idTokenPanel.style.display = 'none';
+        userInfoPanel.style.display = 'none';
+      }
+
+      // Render Logs
+      const logStream = document.getElementById('logStream');
+      if (data.logs && data.logs.length > 0) {
+        logStream.innerHTML = data.logs.map(log => `
+          <div class="log-item ${log.status}">
+            <div class="log-meta">
+              <span>${log.timestamp}</span>
+              <span style="text-transform:uppercase">${log.status}</span>
+            </div>
+            <div class="log-action">${log.action}</div>
+            <div class="log-detail">${escapeHtml(log.detail)}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    async function rotateToken() {
+      try {
+        const res = await fetch('/api/refresh', { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+          alert('✅ Token Refreshed & Rotated Successfully!');
+        } else {
+          alert('❌ Refresh Failed: ' + (data.error_description || data.error));
+        }
+        fetchStatus();
+      } catch (err) {
+        alert('Refresh request failed: ' + err.message);
+      }
+    }
+
+    function openSettingsModal() {
+      document.getElementById('settingsModal').classList.add('active');
+    }
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').classList.remove('active');
+    }
+
+    async function saveConfig(e) {
+      e.preventDefault();
+      const payload = {
+        issuer: document.getElementById('cfgIssuer').value,
+        clientId: document.getElementById('cfgClientId').value,
+        redirectUri: document.getElementById('cfgRedirectUri').value,
+        scopes: document.getElementById('cfgScopes').value,
+      };
+      await fetch('/api/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      closeSettingsModal();
+      fetchStatus();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Check URL params for messages and perform auto-SSO probe
+    window.addEventListener('DOMContentLoaded', async () => {
+      const url = new URL(window.location);
+      const error = url.searchParams.get('error');
+      const errorDesc = url.searchParams.get('error_description');
+      const authSuccess = url.searchParams.get('auth');
+      const loggedOut = url.searchParams.get('logged_out');
+      const guest = url.searchParams.get('guest');
+      const alertBox = document.getElementById('urlAlert');
+
+      if (error) {
+        alertBox.innerHTML = `<div class="alert alert-error"><strong>Authentication Error:</strong> ${escapeHtml(errorDesc || error)}</div>`;
+      } else if (authSuccess) {
+        alertBox.innerHTML = `<div class="alert alert-success"><strong>Success!</strong> Successfully signed in via Playsole One SSO (Seamless Zero-Consent).</div>`;
+        sessionStorage.removeItem('pso_auto_sso_probed');
+      } else if (loggedOut) {
+        alertBox.innerHTML = `<div class="alert alert-success">Local session successfully destroyed.</div>`;
+        sessionStorage.setItem('pso_auto_sso_probed', '1');
+      }
+
+      const res = await fetch('/api/status');
+      const data = await res.json();
+
+      // Seamless Auto-SSO for First-Party Ecosystem Apps:
+      // If the browser already has an active Playsole One session, auto-sign-in immediately.
+      // If not, silently fallback to guest mode displaying the native Sign In button.
+      if (!data.session && !guest && !loggedOut && !error) {
+        const alreadyProbed = sessionStorage.getItem('pso_auto_sso_probed');
+        if (!alreadyProbed) {
+          sessionStorage.setItem('pso_auto_sso_probed', '1');
+          window.location.href = '/login?prompt=none';
+          return;
+        }
+      }
+
+      render(data);
+    });
+  </script>
+</body>
+</html>
