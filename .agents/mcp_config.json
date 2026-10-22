@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "playsole-one": {
+      "command": "node",
+      "args": ["packages/mcp/dist/index.js"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}

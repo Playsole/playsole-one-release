@@ -1,0 +1,26 @@
+{
+  "name": "@playsole-one/mcp",
+  "version": "0.1.0",
+  "description": "Model Context Protocol (MCP) server for Playsole One administration, inspection, and developer workflows",
+  "license": "Apache-2.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "playsole-one-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.js --external:@modelcontextprotocol/sdk --external:@playsole-one/shared --external:zod",
+    "start": "node dist/index.js",
+    "dev": "node -r tsx/cjs src/index.ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@playsole-one/shared": "*",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}
