@@ -2873,27 +2873,52 @@ export function dashboardPage(data: DashboardData, opts: DashboardOptions = {}):
 
   async function enrollPasskey() {
     try {
+      if (!window.PublicKeyCredential || !navigator.credentials) {
+        await showAlert('Passkey Registration', 'Passkeys/WebAuthn are not supported by this browser.');
+        return;
+      }
       var options = await post('/security/webauthn/register/options');
       if (options.error) {
         await showAlert('Passkey Registration', options.error_description || 'Failed to start passkey registration.');
         return;
       }
-      var challenge = options.publicKey.challenge;
-      var cred = await navigator.credentials.create({
-        publicKey: {
-          challenge: base64UrlDecode(challenge),
-          rp: { name: options.publicKey.rp.name },
-          user: {
-            id: base64UrlDecode(options.publicKey.user.id),
-            name: options.publicKey.user.name,
-            displayName: options.publicKey.user.displayName,
-          },
-          pubKeyCredParams: options.publicKey.pubKeyCredParams,
-          timeout: options.publicKey.timeout || 60000,
-          attestation: options.publicKey.attestation || 'none',
-          authenticatorSelection: options.publicKey.authenticatorSelection || { userVerification: 'preferred' },
+      var pk = options.publicKey || options;
+      if (!pk || !pk.challenge || !pk.user) {
+        await showAlert('Passkey Registration', options.error_description || 'Invalid passkey registration options returned from server.');
+        return;
+      }
+      var createOptions = {
+        challenge: base64UrlDecode(pk.challenge),
+        rp: { name: (pk.rp && pk.rp.name) || 'Playsole One' },
+        user: {
+          id: base64UrlDecode(pk.user.id),
+          name: pk.user.name,
+          displayName: pk.user.displayName || pk.user.name,
         },
+        pubKeyCredParams: pk.pubKeyCredParams || [
+          { alg: -7, type: 'public-key' },
+          { alg: -257, type: 'public-key' },
+        ],
+        timeout: pk.timeout || 60000,
+        attestation: pk.attestation || 'none',
+        authenticatorSelection: pk.authenticatorSelection || { userVerification: 'preferred' },
+      };
+      if (pk.rp && pk.rp.id) {
+        createOptions.rp.id = pk.rp.id;
+      }
+      if (pk.excludeCredentials && pk.excludeCredentials.length) {
+        createOptions.excludeCredentials = pk.excludeCredentials.map(function(c) {
+          return {
+            type: c.type || 'public-key',
+            id: base64UrlDecode(c.id),
+            transports: c.transports,
+          };
+        });
+      }
+      var cred = await navigator.credentials.create({
+        publicKey: createOptions,
       });
+      if (!cred) return;
       var result = await post('/security/webauthn/register', {
         response: {
           id: cred.id,
@@ -2902,6 +2927,7 @@ export function dashboardPage(data: DashboardData, opts: DashboardOptions = {}):
           response: {
             attestationObject: base64Url(new Uint8Array(cred.response.attestationObject)),
             clientDataJSON: base64Url(new Uint8Array(cred.response.clientDataJSON)),
+            transports: cred.response.getTransports ? cred.response.getTransports() : undefined,
           },
           clientExtensionResults: cred.getClientExtensionResults ? cred.getClientExtensionResults() : {},
         },

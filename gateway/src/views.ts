@@ -4152,6 +4152,9 @@ export function mfaChallengePage(
     const btn = document.getElementById('webauthnBtn');
     setLoading(btn, 'Checking passkey...');
     try {
+      if (!window.PublicKeyCredential || !navigator.credentials) {
+        throw new Error('Passkeys/WebAuthn are not supported by this browser.');
+      }
       const optionsRes = await fetch('/api/mfa/webauthn/authenticate/options', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -4159,18 +4162,26 @@ export function mfaChallengePage(
       });
       const options = await optionsRes.json();
       if (options.error) throw new Error(options.error_description || 'Failed to start passkey check.');
-      const challenge = options.publicKey.challenge;
-      const allowCredentials = (options.publicKey.allowCredentials || []).map((c) => ({
-        type: c.type,
+      const pk = options.publicKey || options;
+      if (!pk || !pk.challenge) throw new Error('Invalid passkey challenge received.');
+      const allowCredentials = (pk.allowCredentials || []).map((c) => ({
+        type: c.type || 'public-key',
         id: base64UrlDecode(c.id || ''),
+        transports: c.transports,
       }));
+      const getOptions = {
+        challenge: base64UrlDecode(pk.challenge),
+        allowCredentials,
+        userVerification: pk.userVerification || 'preferred',
+        timeout: pk.timeout || 60000,
+      };
+      if (pk.rpId) {
+        getOptions.rpId = pk.rpId;
+      }
       const assertion = await navigator.credentials.get({
-        publicKey: {
-          challenge: base64UrlDecode(challenge),
-          allowCredentials,
-          userVerification: options.publicKey.userVerification || 'preferred',
-        },
+        publicKey: getOptions,
       });
+      if (!assertion) throw new Error('Passkey check cancelled.');
       const authRes = await fetch('/api/mfa/webauthn/authenticate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -4713,25 +4724,47 @@ export function securityPage(
 
   async function enrollPasskey() {
     try {
+      if (!window.PublicKeyCredential || !navigator.credentials) {
+        await showAlert('Passkey registration', 'Passkeys/WebAuthn are not supported by this browser.');
+        return;
+      }
       const options = await post('/security/webauthn/register/options');
       if (options.error) { await showAlert('Passkey registration', options.error_description || 'Failed to start passkey registration.'); return; }
-      const challenge = options.publicKey.challenge;
-      const cred = await navigator.credentials.create({
-        publicKey: {
-          // Fix #1: decode challenge and user.id from Base64URL (not hex).
-          challenge: base64UrlDecode(challenge),
-          rp: { name: options.publicKey.rp.name },
-          user: {
-            id: base64UrlDecode(options.publicKey.user.id),
-            name: options.publicKey.user.name,
-            displayName: options.publicKey.user.displayName,
-          },
-          pubKeyCredParams: options.publicKey.pubKeyCredParams,
-          timeout: options.publicKey.timeout || 60000,
-          attestation: options.publicKey.attestation || 'none',
-          authenticatorSelection: options.publicKey.authenticatorSelection || { userVerification: 'preferred' },
+      const pk = options.publicKey || options;
+      if (!pk || !pk.challenge || !pk.user) {
+        await showAlert('Passkey registration', options.error_description || 'Failed to initialize passkey registration options.');
+        return;
+      }
+      const createOptions = {
+        challenge: base64UrlDecode(pk.challenge),
+        rp: { name: (pk.rp && pk.rp.name) || 'Playsole One' },
+        user: {
+          id: base64UrlDecode(pk.user.id),
+          name: pk.user.name,
+          displayName: pk.user.displayName || pk.user.name,
         },
+        pubKeyCredParams: pk.pubKeyCredParams || [
+          { alg: -7, type: 'public-key' },
+          { alg: -257, type: 'public-key' },
+        ],
+        timeout: pk.timeout || 60000,
+        attestation: pk.attestation || 'none',
+        authenticatorSelection: pk.authenticatorSelection || { userVerification: 'preferred' },
+      };
+      if (pk.rp && pk.rp.id) {
+        createOptions.rp.id = pk.rp.id;
+      }
+      if (pk.excludeCredentials && pk.excludeCredentials.length) {
+        createOptions.excludeCredentials = pk.excludeCredentials.map((c) => ({
+          type: c.type || 'public-key',
+          id: base64UrlDecode(c.id),
+          transports: c.transports,
+        }));
+      }
+      const cred = await navigator.credentials.create({
+        publicKey: createOptions,
       });
+      if (!cred) return;
       const result = await post('/security/webauthn/register', {
         response: {
           id: cred.id,
@@ -4740,6 +4773,7 @@ export function securityPage(
           response: {
             attestationObject: base64Url(new Uint8Array(cred.response.attestationObject)),
             clientDataJSON: base64Url(new Uint8Array(cred.response.clientDataJSON)),
+            transports: cred.response.getTransports ? cred.response.getTransports() : undefined,
           },
           clientExtensionResults: cred.getClientExtensionResults ? cred.getClientExtensionResults() : {},
         },
