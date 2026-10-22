@@ -65,6 +65,11 @@ Playsole One is a unified identity platform using an **OAuth 2.0 + OpenID Connec
 - Manages security events: login attempts, device tracking, suspicious activity detection.
 - Exposes settings: passwordless preference, MFA methods, active sessions list, device history.
 
+### 2.6 Model Context Protocol (MCP) Server
+- Exposes Playsole One management capabilities to AI coding assistants and autonomous agents.
+- Provides tools for system health diagnostics, client provisioning, secret rotation, audit queries, and PKCE generation.
+- Communicates via stdio transport for IDEs (Antigravity, Cursor, Claude Desktop) and integrates with `@playsole-one/shared`.
+
 ## 3. Authentication Flow
 
 ```

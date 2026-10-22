@@ -1182,6 +1182,10 @@ ${renderSeoHead(developersSeo)}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
             <span>Brand Assets &amp; Buttons</span>
           </a>
+          <a href="#mcp-agents" class="sidebar-nav-link" data-target="mcp-agents" onclick="onNavLinkClick()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            <span>Model Context Protocol (MCP)</span>
+          </a>
         </div>
 
         <div class="nav-group">
@@ -2083,6 +2087,67 @@ function verifyWebhook(rawBody, signatureHeader, secret) {
 &lt;!-- Your /auth/login route generates:
      https://one.playsole.xyz/authorize?client_id=YOUR_CLIENT_ID&amp;redirect_uri=YOUR_REDIRECT_URI&amp;response_type=code&amp;scope=openid%20profile%20email&amp;code_challenge=S256_HASH&amp;code_challenge_method=S256&amp;state=RANDOM_STATE&amp;nonce=RANDOM_NONCE
 --&gt;</code></pre>
+          </div>
+        </div>
+
+        <!-- 13. Model Context Protocol (MCP) AI Agent Server -->
+        <div class="bento-card col-12" id="mcp-agents">
+          <div class="card-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            <span>Model Context Protocol (MCP) Server</span>
+            <span class="badge-pill badge-purple">AI Agent Ready</span>
+          </div>
+          <div class="card-desc">
+            Connect AI assistants (Claude Desktop, Cursor, Antigravity, or custom LLM agents) directly to Playsole One. The bundled <code>@playsole-one/mcp</code> server allows AI workflows to securely inspect health, manage OAuth clients, query audit logs, and test PKCE authentication flows.
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 16px;">
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px;">
+              <div style="font-weight: 600; font-size: 13px; color: var(--accent-cyan); margin-bottom: 6px;">⚡ Identity &amp; Platform Ops</div>
+              <ul style="font-size: 12.5px; color: var(--text-secondary); list-style: inside square; line-height: 1.6;">
+                <li><code>check_system_health</code> — Core DB &amp; Redis connectivity</li>
+                <li><code>list_oauth_clients</code> — Inspect registered applications</li>
+                <li><code>register_oauth_client</code> — Provision confidential clients</li>
+                <li><code>rotate_client_secret</code> — Auto-rotate 256-bit hashed secrets</li>
+                <li><code>inspect_user</code> — Lookup account claims &amp; MFA state</li>
+                <li><code>query_audit_logs</code> — Filter immutable audit records</li>
+              </ul>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px;">
+              <div style="font-weight: 600; font-size: 13px; color: var(--accent-emerald); margin-bottom: 6px;">🛠️ Developer Workflows</div>
+              <ul style="font-size: 12.5px; color: var(--text-secondary); list-style: inside square; line-height: 1.6;">
+                <li><code>generate_pkce_pair</code> — RFC 7636 challenge &amp; verifier</li>
+                <li><code>inspect_rate_limit</code> — Redis counters &amp; remaining TTLs</li>
+                <li><code>fetch_jwks</code> — Validate active RS256 signing keys</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="code-container">
+            <div class="code-header">
+              <div class="code-tabs">
+                <button class="code-tab-btn active" onclick="switchSnippet(this, 'snip-mcp-config')">Client Config (.agents / Claude)</button>
+                <button class="code-tab-btn" onclick="switchSnippet(this, 'snip-mcp-run')">Running Server</button>
+              </div>
+              <button class="code-copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre id="snip-mcp-config" style="display: block;"><code>{
+  "mcpServers": {
+    "playsole-one": {
+      "command": "node",
+      "args": ["packages/mcp/dist/index.js"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}</code></pre>
+            <pre id="snip-mcp-run" style="display: none;"><code># Start the Playsole One MCP server over stdio
+npm run mcp
+
+# Or in development mode with live watch/compilation:
+npm run dev:mcp</code></pre>
           </div>
         </div>
 

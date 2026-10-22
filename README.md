@@ -7,6 +7,7 @@ Unified identity and account platform for the Playsole ecosystem. Provides a sin
 - **OAuth 2.0 + OpenID Connect** — Authorization Code Flow with PKCE (S256)
 - **Backend-for-Frontend (BFF)** — Browser only holds opaque HttpOnly session cookies; tokens never reach the client
 - **Refresh Token Rotation** — New refresh token issued on each use with family-based theft detection
+- **Model Context Protocol (MCP)** — Integrated AI agent server for identity management and automated developer workflows
 - **Multi-Service Architecture** — Gateway, Auth, Session, Profile, Consent, and Security services
 - **Server-Rendered Auth UI** — Login and registration pages served by the gateway (no SPA dependency)
 
@@ -61,7 +62,9 @@ The gateway acts as a BFF: it resolves the session cookie into user identity, in
 │   ├── security/        Security Service (MFA, risk, recovery)
 │   └── server/          Unified runtime booting all services
 ├── worker/              Cloudflare Workers entrypoint
-├── packages/shared/     Shared TypeScript code
+├── packages/
+│   ├── shared/          Shared TypeScript utilities, DB & Redis clients
+│   └── mcp/             Model Context Protocol (MCP) AI agent server
 ├── scripts/             Migrations, health checks, load testing
 ├── test-apps/           Sample first-party / third-party relying parties
 ├── tests/               Unit and integration tests
