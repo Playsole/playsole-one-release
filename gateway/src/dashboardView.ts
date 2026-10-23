@@ -176,10 +176,11 @@ export function dashboardPage(data: DashboardData, opts: DashboardOptions = {}):
     untrusted_device: 'Sign-in from an untrusted device',
   };
 
-  const alertRows = (opts.alerts ?? []).map((a) => {
+  const activeAlerts = (opts.alerts ?? []).filter((a) => !a.seen);
+  const alertRows = activeAlerts.map((a) => {
     const lines = a.signals.map((s) => SIGNAL_LABELS[s] ?? s).map(escapeHtml).join(' &middot; ');
     return `
-      <div class="signal-alert-banner ${a.seen ? 'seen' : 'unseen'}">
+      <div class="signal-alert-banner unseen">
         <div class="signal-alert-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
@@ -187,10 +188,9 @@ export function dashboardPage(data: DashboardData, opts: DashboardOptions = {}):
           <div class="signal-alert-title">${lines}</div>
           <div class="signal-alert-sub">${escapeHtml(a.deviceLabel)} &middot; ${new Date(a.at).toLocaleString()}</div>
         </div>
-        ${!a.seen ? `
-        <form method="POST" action="/security/alerts/${escapeHtml(a.id)}/dismiss">
+        <form method="POST" action="/security/alerts/${escapeHtml(a.id)}/dismiss" onsubmit="this.closest('.signal-alert-banner').remove();">
           <button type="submit" class="btn-island-ghost btn-sm">Dismiss</button>
-        </form>` : ''}
+        </form>
       </div>`;
   }).join('');
 
@@ -2189,13 +2189,17 @@ export function dashboardPage(data: DashboardData, opts: DashboardOptions = {}):
 
   <!-- SECURITY TAB (Settings -> Security) -->
   <section class="tab-panel ${initialTab === 'security' ? 'active' : ''}" id="tab-security">
-    ${(opts.alerts ?? []).length > 0 ? `
+    ${activeAlerts.length > 0 ? `
     <div class="studio-card" style="margin-bottom:24px;">
       <div class="studio-card-header">
         <div class="studio-card-title">
           <h2>Recent Security Alerts</h2>
           <p>Unusual sign-in activity detected on your account.</p>
         </div>
+        ${activeAlerts.length > 1 ? `
+        <form method="POST" action="/security/alerts/all/dismiss">
+          <button type="submit" class="btn-island-ghost btn-sm">Dismiss All</button>
+        </form>` : ''}
       </div>
       ${alertRows}
     </div>` : ''}
@@ -2302,9 +2306,9 @@ export function dashboardPage(data: DashboardData, opts: DashboardOptions = {}):
           ${methodRows || '<div style="padding:16px 0;font-size:14px;color:var(--text-muted)">No secondary authentication methods enrolled yet.</div>'}
         </div>
 
-        ${data.backupCodes.total > 0 ? `
+        ${(data.backupCodes?.total ?? 0) > 0 ? `
         <div style="margin-bottom:20px;font-size:13px;color:var(--text-secondary)">
-          Backup codes remaining: <strong>${data.backupCodes.total - data.backupCodes.used}</strong> of <strong>${data.backupCodes.total}</strong>
+          Backup codes remaining: <strong>${(data.backupCodes?.total ?? 0) - (data.backupCodes?.used ?? 0)}</strong> of <strong>${data.backupCodes?.total ?? 0}</strong>
         </div>` : ''}
 
         <div style="display:flex;gap:12px;flex-wrap:wrap;">

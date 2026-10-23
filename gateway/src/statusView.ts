@@ -1,5 +1,6 @@
 import type { HealthHistoryMetrics } from '@playsole-one/shared';
 import { renderSeoHead, statusSeo } from './seo';
+import { injectTheme } from './theme';
 
 export interface ServiceCheck {
   name: string;
@@ -155,7 +156,7 @@ export function renderStatusPage(checks: ServiceCheck[], userId?: string, histor
         </div>
       </div>`;
 
-  return `<!DOCTYPE html>
+  return injectTheme(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -2056,5 +2057,5 @@ ${renderSeoHead(statusSeo)}
     startInterval();
   </script>
 </body>
-</html>`;
+</html>`);
 }

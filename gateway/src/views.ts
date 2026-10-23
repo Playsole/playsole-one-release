@@ -150,7 +150,7 @@ ${renderSeoHead(landingSeo)}
   }
   .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
   .btn-outline {
-    background: #ffffff;
+    background: var(--bg-surface);
     color: var(--fg);
     border-color: var(--border-strong);
   }
@@ -268,7 +268,7 @@ ${renderSeoHead(landingSeo)}
     display: none;
     position: fixed;
     inset: 62px 0 0 0;
-    background: #ffffff;
+    background: var(--bg);
     z-index: 49;
     padding: 24px;
     flex-direction: column;
@@ -320,7 +320,7 @@ ${renderSeoHead(landingSeo)}
     gap: 8px;
     padding: 5px 14px;
     border-radius: var(--radius-full);
-    background: #ffffff;
+    background: var(--bg-surface);
     border: 1px solid var(--border-strong);
     box-shadow: var(--shadow-sm);
     font-family: var(--mono);
@@ -561,7 +561,7 @@ ${renderSeoHead(landingSeo)}
     gap: 20px;
   }
   .bento-card {
-    background: #ffffff;
+    background: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     padding: 28px;
@@ -657,7 +657,7 @@ ${renderSeoHead(landingSeo)}
     position: relative;
   }
   .step-card {
-    background: #ffffff;
+    background: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     padding: 32px 28px;
@@ -705,7 +705,7 @@ ${renderSeoHead(landingSeo)}
 
   /* ── Developer Integration Section ── */
   .integration-box {
-    background: #ffffff;
+    background: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
@@ -806,7 +806,7 @@ ${renderSeoHead(landingSeo)}
   footer {
     border-top: 1px solid var(--border);
     padding: 64px 0 32px;
-    background: #ffffff;
+    background: var(--bg);
   }
   .footer-grid {
     display: grid;
@@ -4461,9 +4461,10 @@ export function securityPage(
     impossible_travel: 'Sign-in from a location that conflicts with recent activity',
     untrusted_device: 'Sign-in from an untrusted device',
   };
-  const alertRows = (opts.alerts ?? []).map((a) => {
+  const activeAlerts = (opts.alerts ?? []).filter((a) => !a.seen);
+  const alertRows = activeAlerts.map((a) => {
     const lines = a.signals.map((s) => SIGNAL_LABELS[s] ?? s).map(m).join('<br>');
-    return `<li class="method"><span class="method-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span><span class="method-name">${lines}<small>${m(a.deviceLabel)} &middot; ${fmtDate(new Date(a.at).toISOString())}</small></span>${a.seen ? '' : `<form method="POST" action="/security/alerts/${m(a.id)}/dismiss"><button type="submit" class="link-btn">Dismiss</button></form>`}</li>`;
+    return `<li class="method"><span class="method-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span><span class="method-name">${lines}<small>${m(a.deviceLabel)} &middot; ${fmtDate(new Date(a.at).toISOString())}</small></span><form method="POST" action="/security/alerts/${m(a.id)}/dismiss"><button type="submit" class="link-btn">Dismiss</button></form></li>`;
   }).join('');
   const methodRows = data.methods.map((method) => {
     const typeLabel = method.type === 'totp' ? 'Authenticator app' : method.type === 'webauthn' ? 'Passkey' : 'Backup codes';
@@ -4613,7 +4614,7 @@ export function securityPage(
     <p style="color:#999;font-size:12px">They won't be shown again.</p>
   </div>` : ''}
 
-  ${(opts.alerts ?? []).length > 0 ? `
+  ${activeAlerts.length > 0 ? `
   <div class="card">
     <h2>Recent security activity</h2>
     <p>We noticed the following sign-ins from this account:</p>
@@ -6422,18 +6423,18 @@ ${headSeo}
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #090d16; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg, #fff); color: var(--fg, #090d16); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
   a { color: #0076FE; text-decoration: none; }
   a:hover { opacity: 0.85; }
   .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
   .nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(15,23,42,0.08); }
   .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; }
-  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 600; font-size: 15px; color: #090d16; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 600; font-size: 15px; color: var(--fg, #090d16); }
   .brand img { height: 28px; width: auto; }
   .nav-links { display: flex; gap: 24px; }
   .nav-links a { color: #475569; font-size: 13.5px; font-weight: 500; transition: color 150ms; }
-  .nav-links a:hover { color: #090d16; opacity: 1; }
+  .nav-links a:hover { color: var(--fg, #090d16); opacity: 1; }
   .nav-links a.active { color: #0076FE; font-weight: 600; }
   .nav-actions { display: flex; gap: 10px; align-items: center; }
 
@@ -6447,7 +6448,7 @@ ${headSeo}
     cursor: pointer;
     align-items: center;
     justify-content: center;
-    color: #090d16;
+    color: var(--fg, #090d16);
   }
   .hamburger svg { width: 20px; height: 20px; }
   .hamburger .icon-close { display: none; }
@@ -6458,7 +6459,7 @@ ${headSeo}
     display: none;
     position: fixed;
     inset: 60px 0 0 0;
-    background: #ffffff;
+    background: var(--bg, #ffffff);
     z-index: 49;
     padding: 20px;
     flex-direction: column;

@@ -150,8 +150,16 @@ async function createRiskAlert(userId: string, tenantId: string, alert: RiskAler
 }
 
 async function dismissRiskAlert(userId: string, alertId: string): Promise<void> {
-  const supabase = getSupabase();
-  await supabase.from('risk_alerts').update({ seen: true }).eq('id', alertId).eq('user_id', userId);
+  try {
+    const supabase = getSupabase();
+    if (alertId === 'all') {
+      await supabase.from('risk_alerts').update({ seen: true }).eq('user_id', userId);
+    } else {
+      await supabase.from('risk_alerts').update({ seen: true }).eq('id', alertId).eq('user_id', userId);
+    }
+  } catch (err) {
+    logger.warn({ err, userId, alertId }, 'failed to dismiss risk alert');
+  }
 }
 
 async function completeMfaLogin(req: Request, res: Response, pendingId: string): Promise<string | null> {

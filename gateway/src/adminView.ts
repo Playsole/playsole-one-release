@@ -1,3 +1,5 @@
+import { injectTheme } from './theme';
+
 export interface AdminUser {
   id: string;
   tenantId: string;
@@ -278,7 +280,7 @@ export function adminDashboardPage(data: AdminDashboardData, opts: AdminDashboar
     `;
   }).join('');
 
-  return `<!DOCTYPE html>
+  return injectTheme(`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1503,7 +1505,7 @@ export function adminDashboardPage(data: AdminDashboardData, opts: AdminDashboar
     <div style="display:flex; align-items:center; gap:8px;">
       <div class="dock-user-capsule">
         <a href="/dashboard" class="dock-back-btn">&larr; User Dashboard</a>
-        ${renderAvatar(data.currentUser.displayName, data.currentUser.email, data.currentUser.avatarUrl, 32)}
+        ${renderAvatar(data.currentUser?.displayName || (data as any).currentAdmin?.email || 'Admin', data.currentUser?.email || (data as any).currentAdmin?.email || '', data.currentUser?.avatarUrl, 32)}
         <a href="/logout" class="dock-signout-btn" title="Sign out">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </a>
@@ -2018,11 +2020,11 @@ export function adminDashboardPage(data: AdminDashboardData, opts: AdminDashboar
 </script>
 
 </body>
-</html>`;
+</html>`);
 }
 
 export function adminAccessDeniedPage(title: string, message: string, userEmail?: string): string {
-  return `<!DOCTYPE html>
+  return injectTheme(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -2701,7 +2703,7 @@ export function adminAccessDeniedPage(title: string, message: string, userEmail?
     })();
   </script>
 </body>
-</html>`;
+</html>`);
 }
 
 

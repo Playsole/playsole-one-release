@@ -6,8 +6,8 @@ export function renderDevelopersView(): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0c0d0e">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#000000">
 ${renderSeoHead(developersSeo)}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,28 +15,53 @@ ${renderSeoHead(developersSeo)}
   <link rel="icon" type="image/png" href="/logo.png">
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
   <style>
-    :root {
-      --bg-base: #0c0d0e;
-      --bg-surface: rgba(255, 255, 255, 0.03);
-      --bg-surface-elevated: rgba(255, 255, 255, 0.05);
-      --bg-surface-hover: rgba(255, 255, 255, 0.07);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-strong: rgba(255, 255, 255, 0.16);
-      --text-primary: #f5f5f7;
-      --text-secondary: #a1a1a6;
-      --text-muted: #6e6e73;
+    /* Dark Theme (Pure True OLED Black) */
+    :root,
+    html.dark,
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg-base: #000000;
+      --bg-surface: #08080a;
+      --bg-surface-elevated: #101014;
+      --bg-surface-hover: #18181e;
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --border-strong: rgba(255, 255, 255, 0.2);
+      --text-primary: #ffffff;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
       --accent-blue: #0a84ff;
-      --accent-cyan: #64d2ff;
+      --accent-cyan: #38bdf8;
       --accent-emerald: #30d158;
-      --accent-purple: #bf5af2;
-      --accent-orange: #ff9f0a;
-      --code-bg: #141517;
+      --accent-purple: #c084fc;
+      --accent-orange: #fb923c;
+      --code-bg: #040405;
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 20px;
       --radius-full: 9999px;
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* Light Theme for Developer Portal */
+    html:not(.dark):not([data-theme="dark"]),
+    [data-theme="light"] {
+      color-scheme: light;
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-surface-hover: #e2e8f0;
+      --border-subtle: rgba(15, 23, 42, 0.08);
+      --border-strong: rgba(15, 23, 42, 0.16);
+      --text-primary: #090d16;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --accent-blue: #0076fe;
+      --accent-cyan: #0284c7;
+      --accent-emerald: #10b981;
+      --accent-purple: #7c3aed;
+      --accent-orange: #d97706;
+      --code-bg: #090d16;
     }
 
     * {
@@ -85,7 +110,7 @@ ${renderSeoHead(developersSeo)}
     }
 
     .omni-dock {
-      background: rgba(18, 19, 21, 0.82);
+      background: var(--bg-surface-elevated);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
       border: 1px solid var(--border-subtle);
@@ -94,10 +119,20 @@ ${renderSeoHead(developersSeo)}
       display: flex;
       align-items: center;
       gap: 14px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.1) inset;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.08) inset;
       max-width: 1360px;
       width: 100%;
       pointer-events: auto;
+    }
+    html.dark .omni-dock, [data-theme="dark"] .omni-dock {
+      background: rgba(8, 8, 10, 0.92);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.85), 0 1px 0 rgba(255,255,255,0.08) inset;
+    }
+    html:not(.dark):not([data-theme="dark"]) .omni-dock, [data-theme="light"] .omni-dock {
+      background: rgba(255, 255, 255, 0.92);
+      border-color: rgba(15, 23, 42, 0.08);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
     }
 
     .mobile-nav-toggle {
@@ -255,7 +290,7 @@ ${renderSeoHead(developersSeo)}
       flex-shrink: 0;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      background: rgba(18, 19, 21, 0.75);
+      background: var(--bg-surface-elevated);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
       border: 1px solid var(--border-subtle);
@@ -267,6 +302,17 @@ ${renderSeoHead(developersSeo)}
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
       scrollbar-width: thin;
       scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    }
+    html.dark .dev-sidebar, [data-theme="dark"] .dev-sidebar {
+      background: rgba(6, 6, 8, 0.94);
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+    }
+    html:not(.dark):not([data-theme="dark"]) .dev-sidebar, [data-theme="light"] .dev-sidebar {
+      background: rgba(255, 255, 255, 0.92);
+      border-color: rgba(15, 23, 42, 0.08);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.05);
+      scrollbar-color: rgba(15, 23, 42, 0.15) transparent;
     }
 
     .dev-sidebar::-webkit-scrollbar {
@@ -622,6 +668,11 @@ ${renderSeoHead(developersSeo)}
       margin-bottom: 12px;
       word-break: break-word;
     }
+    html:not(.dark):not([data-theme="dark"]) .hero-title, [data-theme="light"] .hero-title {
+      background: linear-gradient(180deg, #090d16 0%, #334155 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
     .hero-desc {
       font-size: clamp(14.5px, 2.5vw, 16px);
@@ -655,6 +706,24 @@ ${renderSeoHead(developersSeo)}
     .bento-card:hover {
       border-color: var(--border-strong);
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    }
+
+    html.dark .bento-card, [data-theme="dark"] .bento-card {
+      background: #08080a;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    html.dark .bento-card:hover, [data-theme="dark"] .bento-card:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+    }
+    html:not(.dark):not([data-theme="dark"]) .bento-card, [data-theme="light"] .bento-card {
+      background: #ffffff;
+      border-color: rgba(15, 23, 42, 0.08);
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 1px 3px 0 rgba(15, 23, 42, 0.03);
+    }
+    html:not(.dark):not([data-theme="dark"]) .bento-card:hover, [data-theme="light"] .bento-card:hover {
+      border-color: rgba(15, 23, 42, 0.16);
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
     }
 
     .col-12 { grid-column: span 12; }
@@ -693,7 +762,7 @@ ${renderSeoHead(developersSeo)}
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
       padding: 6px 12px;
@@ -702,6 +771,11 @@ ${renderSeoHead(developersSeo)}
       color: var(--text-primary);
       max-width: 100%;
       white-space: nowrap;
+    }
+    html:not(.dark):not([data-theme="dark"]) .endpoint-pill, [data-theme="light"] .endpoint-pill {
+      background: #f1f5f9;
+      border-color: rgba(15, 23, 42, 0.08);
+      color: #090d16;
     }
 
     .method-badge {
@@ -724,6 +798,14 @@ ${renderSeoHead(developersSeo)}
       overflow: hidden;
       margin-top: 14px;
       max-width: 100%;
+    }
+    html.dark .code-container, [data-theme="dark"] .code-container {
+      background: #040405;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    html:not(.dark):not([data-theme="dark"]) .code-container, [data-theme="light"] .code-container {
+      background: #090d16;
+      border-color: rgba(15, 23, 42, 0.12);
     }
 
     .code-header {
@@ -843,6 +925,14 @@ ${renderSeoHead(developersSeo)}
       background: rgba(0, 0, 0, 0.25);
       -webkit-overflow-scrolling: touch;
     }
+    html.dark .table-container, [data-theme="dark"] .table-container {
+      background: #040405;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    html:not(.dark):not([data-theme="dark"]) .table-container, [data-theme="light"] .table-container {
+      background: #ffffff;
+      border-color: rgba(15, 23, 42, 0.08);
+    }
     .data-table {
       width: 100%;
       border-collapse: collapse;
@@ -860,6 +950,11 @@ ${renderSeoHead(developersSeo)}
       border-bottom: 1px solid var(--border-subtle);
       white-space: nowrap;
     }
+    html:not(.dark):not([data-theme="dark"]) .data-table th, [data-theme="light"] .data-table th {
+      background: #f8fafc;
+      color: #475569;
+      border-bottom-color: rgba(15, 23, 42, 0.08);
+    }
     .data-table td {
       padding: 11px 14px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
@@ -867,8 +962,15 @@ ${renderSeoHead(developersSeo)}
       vertical-align: top;
       line-height: 1.45;
     }
+    html:not(.dark):not([data-theme="dark"]) .data-table td, [data-theme="light"] .data-table td {
+      border-bottom-color: rgba(15, 23, 42, 0.06);
+      color: #334155;
+    }
     .data-table tr:hover td {
       background: rgba(255, 255, 255, 0.02);
+    }
+    html:not(.dark):not([data-theme="dark"]) .data-table tr:hover td, [data-theme="light"] .data-table tr:hover td {
+      background: rgba(15, 23, 42, 0.02);
     }
     .data-table tr:last-child td {
       border-bottom: none;
@@ -2052,7 +2154,7 @@ function verifyWebhook(rawBody, signatureHeader, secret) {
             </table>
           </div>
 
-          <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 18px; font-size: 13.5px; line-height: 1.6;">
+          <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 18px; font-size: 13.5px; line-height: 1.6;">
             <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">Button &amp; Branding Rules:</div>
             <ul style="margin-left: 18px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
               <li><strong>Third-Party Apps &amp; Games:</strong> You must use the official <strong>"Sign in with Playsole"</strong> wording and display the <strong>Playsole brand logo</strong> (not Playsole One logo). When your users click it, Playsole One will display the branded consent screen.</li>
@@ -2102,7 +2204,7 @@ function verifyWebhook(rawBody, signatureHeader, secret) {
           </div>
 
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 16px;">
-            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px;">
+            <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px;">
               <div style="font-weight: 600; font-size: 13px; color: var(--accent-cyan); margin-bottom: 6px;">⚡ Identity &amp; Platform Ops</div>
               <ul style="font-size: 12.5px; color: var(--text-secondary); list-style: inside square; line-height: 1.6;">
                 <li><code>check_system_health</code> — Core DB &amp; Redis connectivity</li>
@@ -2114,7 +2216,7 @@ function verifyWebhook(rawBody, signatureHeader, secret) {
               </ul>
             </div>
 
-            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px;">
+            <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px;">
               <div style="font-weight: 600; font-size: 13px; color: var(--accent-emerald); margin-bottom: 6px;">🛠️ Developer Workflows</div>
               <ul style="font-size: 12.5px; color: var(--text-secondary); list-style: inside square; line-height: 1.6;">
                 <li><code>generate_pkce_pair</code> — RFC 7636 challenge &amp; verifier</li>
