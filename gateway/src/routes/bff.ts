@@ -321,7 +321,11 @@ router.get('/login', async (req, res) => {
   let returnTo = '/profile';
   if (pendingAuthId) {
     const pending = await getPendingAuth(pendingAuthId);
-    if (pending) returnTo = pending.originalUrl;
+    if (pending) {
+      returnTo = pending.originalUrl;
+    } else if (req.query.return_to) {
+      returnTo = validateReturnTo(req.query.return_to as string);
+    }
   } else {
     returnTo = validateReturnTo((req.query.return_to as string) ?? '/dashboard');
   }
@@ -342,9 +346,11 @@ router.post('/login', authRateLimit, async (req, res) => {
 
   let returnTo = '/profile';
   if (pending_auth) {
-    const pending = await consumePendingAuth(pending_auth);
+    const pending = await getPendingAuth(pending_auth);
     if (pending) {
       returnTo = pending.originalUrl;
+    } else if (return_to) {
+      returnTo = validateReturnTo(return_to);
     }
   } else if (return_to) {
     // Fix #10: validate return_to to prevent open redirect attacks.
@@ -362,7 +368,7 @@ router.post('/login', authRateLimit, async (req, res) => {
       // Email not yet confirmed — send the user to the OTP page so they can
       // finish verification instead of a dead-end error.
       if (result.error === 'email_not_confirmed') {
-        res.redirect(302, `/verify-email?email=${encodeURIComponent(email)}`);
+        res.redirect(302, `/verify-email?email=${encodeURIComponent(email)}&return_to=${encodeURIComponent(returnTo)}`);
         return;
       }
       if (result.error === 'account_suspended' || result.error === 'account_disabled') {
@@ -371,6 +377,10 @@ router.post('/login', authRateLimit, async (req, res) => {
       }
       res.status(401).send(loginPage(returnTo, pending_auth, result.errorDescription));
       return;
+    }
+
+    if (pending_auth) {
+      await consumePendingAuth(pending_auth);
     }
 
     if (await startMfaStepUp(req, res, {
@@ -406,7 +416,11 @@ router.get('/register', async (req, res) => {
   let returnTo = '/profile';
   if (pendingAuthId) {
     const pending = await getPendingAuth(pendingAuthId);
-    if (pending) returnTo = pending.originalUrl;
+    if (pending) {
+      returnTo = pending.originalUrl;
+    } else if (req.query.return_to) {
+      returnTo = validateReturnTo(req.query.return_to as string);
+    }
   } else {
     returnTo = validateReturnTo((req.query.return_to as string) ?? '/dashboard');
   }
@@ -418,9 +432,11 @@ router.post('/register', authRateLimit, async (req, res) => {
 
   let returnTo = '/profile';
   if (pending_auth) {
-    const pending = await consumePendingAuth(pending_auth);
+    const pending = await getPendingAuth(pending_auth);
     if (pending) {
       returnTo = pending.originalUrl;
+    } else if (return_to) {
+      returnTo = validateReturnTo(return_to);
     }
   } else if (return_to) {
     // Fix #10: validate return_to to prevent open redirect attacks.
@@ -443,6 +459,10 @@ router.post('/register', authRateLimit, async (req, res) => {
     if ('error' in result) {
       res.status(409).send(registerPage(returnTo, pending_auth, result.errorDescription));
       return;
+    }
+
+    if (pending_auth) {
+      await consumePendingAuth(pending_auth);
     }
 
     const ipAddress = getClientIp(req);
@@ -474,7 +494,11 @@ router.post('/login/magic-link', authRateLimit, async (req, res) => {
   let returnTo = '/profile';
   if (pending_auth) {
     const pending = await getPendingAuth(pending_auth);
-    if (pending) returnTo = pending.originalUrl;
+    if (pending) {
+      returnTo = pending.originalUrl;
+    } else if (return_to) {
+      returnTo = validateReturnTo(return_to);
+    }
   } else if (return_to) {
     // Fix #10: validate return_to to prevent open redirect attacks.
     returnTo = validateReturnTo(return_to);
@@ -826,7 +850,7 @@ router.get('/authorize', authRateLimit, async (req, res) => {
 
     const id = randomUUID();
     await stateStore.setJsonWithTtl(`pending-auth:${id}`, { originalUrl: req.originalUrl, createdAt: Date.now() }, PENDING_AUTH_TTL_MS);
-    res.redirect(302, `/login?pending_auth=${id}`);
+    res.redirect(302, `/login?pending_auth=${id}&return_to=${encodeURIComponent(req.originalUrl)}`);
     return;
   }
 

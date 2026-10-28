@@ -2206,7 +2206,7 @@ export function loginPage(returnTo: string, pendingAuthId?: string, error?: stri
   </form>
 
   <div class="auth-footer">
-    Don't have an account? <a href="/register?${pendingAuthId ? `pending_auth=${pendingAuthId}` : `return_to=${encodeURIComponent(returnTo)}`}">Create one</a>
+    Don't have an account? <a href="/register?${pendingAuthId ? `pending_auth=${pendingAuthId}&return_to=${encodeURIComponent(returnTo)}` : `return_to=${encodeURIComponent(returnTo)}`}">Create one</a>
   </div>
 </main>
 
@@ -2527,7 +2527,7 @@ export function registerPage(returnTo: string, pendingAuthId?: string, error?: s
   </form>
 
   <div class="auth-footer">
-    Already have an account? <a href="/login?${pendingAuthId ? `pending_auth=${pendingAuthId}` : `return_to=${encodeURIComponent(returnTo)}`}">Sign in</a>
+    Already have an account? <a href="/login?${pendingAuthId ? `pending_auth=${pendingAuthId}&return_to=${encodeURIComponent(returnTo)}` : `return_to=${encodeURIComponent(returnTo)}`}">Sign in</a>
   </div>
 </main>
 
